@@ -5,10 +5,7 @@
       <h1>手机号登录</h1>
       <el-form ref="ruleForm" :model="ruleForm" :rules="rules">
         <el-form-item prop="mobile">
-          <el-input
-            v-model="ruleForm.mobile"
-            placeholder="请输入手机号"
-          />
+          <el-input v-model="ruleForm.mobile" placeholder="请输入手机号" />
         </el-form-item>
         <el-form-item prop="password">
           <el-input
@@ -21,7 +18,7 @@
           <el-checkbox v-model="ruleForm.isAgree">用户平台使用协议</el-checkbox>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="submit(ruleForm)">登录</el-button>
+          <el-button type="primary" @click="submit">登录</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -35,9 +32,9 @@ export default {
   data() {
     return {
       ruleForm: {
-        mobile: '',
-        password: '',
-        isAgree: false
+        mobile: process.env.NODE_ENV === 'development' ? '13800000002' : '',
+        password: process.env.NODE_ENV === 'development' ? 'hm#qd@23!' : '',
+        isAgree: process.env.NODE_ENV === 'development'
       },
       rules: {
         mobile: [
@@ -72,9 +69,10 @@ export default {
 
   methods: {
     submit() {
-      this.$refs.ruleForm.validate((value) => {
-        if (value) {
-          console.log(value)
+      this.$refs.ruleForm.validate(async(valid) => {
+        if (valid) {
+          await this.$store.dispatch('user/login', this.ruleForm)
+          this.$router.push('/')
         }
       })
     }
