@@ -45,16 +45,10 @@
         :rules="rules"
       >
         <el-form-item label="原密码" prop="oldPassword">
-          <el-input
-            v-model.trim="ruleForm.oldPassword"
-            show-password
-          />
+          <el-input v-model.trim="ruleForm.oldPassword" show-password />
         </el-form-item>
         <el-form-item label="新密码" prop="newPassword">
-          <el-input
-            v-model.trim="ruleForm.newPassword"
-            show-password
-          />
+          <el-input v-model.trim="ruleForm.newPassword" show-password />
         </el-form-item>
         <el-form-item label="重置密码" prop="password">
           <el-input v-model.trim="ruleForm.password" show-password />
@@ -109,7 +103,8 @@ export default {
               } else {
                 callback()
               }
-            }
+            },
+            trigger: 'blur'
           }
         ]
       }

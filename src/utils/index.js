@@ -117,3 +117,19 @@ export function param2Obj(url) {
   })
   return obj
 }
+
+/**
+ * @param {array} date
+ * @param {number} rootValue
+ */
+export function transListToTreeData(date, rootValue) {
+  const arr = []
+  date.forEach((item) => {
+    if (item.pid === rootValue) {
+      const children = transListToTreeData(date, item.id)
+      item.children = children
+      arr.push(item)
+    }
+  })
+  return arr
+}

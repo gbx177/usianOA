@@ -58,7 +58,8 @@ export default {
           {
             validator: (rule, value, callback) => {
               value ? callback() : callback(new Error('没有勾选用户平台协议'))
-            }
+            },
+            trigger: 'blur'
           }
         ]
       }
