@@ -36,11 +36,11 @@
         </template>
       </el-tree>
     </div>
-    <AddBox :id="id" :show-dialog.sync="showDialog" @a="getList" />
+    <AddBox :id="id" ref="box" :show-dialog.sync="showDialog" @a="getList" />
   </div>
 </template>
 <script>
-import { getDepartmentListApi } from '@/api/department'
+import { getDepartmentListApi, getDeleteListApi } from '@/api/department'
 import { transListToTreeData } from '@/utils'
 import AddBox from './components/add-box.vue'
 export default {
@@ -65,9 +65,38 @@ export default {
   },
   methods: {
     handleCommand(e, id) {
-      if (e === 'add') {
-        this.showDialog = true
-        this.id = id
+      switch (e) {
+        case 'add':
+          this.showDialog = true
+          this.id = id
+          break
+        case 'edit':
+          this.showDialog = true
+          this.id = id
+          this.$nextTick(() => {
+            this.$refs.box.getDetails()
+          })
+          break
+        case 'remove':
+          this.$confirm('您确定要删除该部门吗', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消'
+          })
+            .then(async() => {
+              await getDeleteListApi(id)
+              this.getList()
+              this.$message({
+                type: 'success',
+                message: '删除部门成功'
+              })
+            })
+            .catch(() => {
+              this.$message({
+                type: 'info',
+                message: '已取消删除'
+              })
+            })
+          break
       }
     },
     async getList() {

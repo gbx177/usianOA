@@ -22,3 +22,25 @@ export function getListApi(data) {
     data
   })
 }
+// 获取部门详情
+export function getDetailsApi(id) {
+  return service({
+    url: `/company/department/${id}`,
+    method: 'GET'
+  })
+}
+// 修改部门详情
+export function getDetailsListApi(id, data) {
+  return service({
+    url: `/company/department/${id}`,
+    method: 'PUT',
+    data
+  })
+}
+// 删除部门
+export function getDeleteListApi(id) {
+  return service({
+    url: `/company/department/${id}`,
+    method: 'DELETE'
+  })
+}

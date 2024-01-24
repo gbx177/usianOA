@@ -1,21 +1,17 @@
 <template>
-  <!-- .sync 不会正常工作 -->
-  <el-dialog title="新增部门" :visible="showDialog" @close="close">
+  <el-dialog
+    title="新增部门"
+    :visible.sync="showDialog"
+    :before-close="close"
+    @close="close"
+  >
     <!-- 表单 -->
     <el-form ref="form" :model="form" label-width="120px" :rules="rules">
       <el-form-item label="部门名称" prop="name">
-        <el-input
-          v-model="form.name"
-          size="mini"
-          placeholder="2-10个字符"
-        />
+        <el-input v-model="form.name" size="mini" placeholder="2-10个字符" />
       </el-form-item>
       <el-form-item label="部门编码" prop="code">
-        <el-input
-          v-model="form.code"
-          size="mini"
-          placeholder="2-10个字符"
-        />
+        <el-input v-model="form.code" size="mini" placeholder="2-10个字符" />
       </el-form-item>
       <el-form-item label="部门负责人" prop="managerId">
         <el-select
@@ -52,7 +48,9 @@
 import {
   getDepartmentListApi,
   getDepartmentUserListApi,
-  getListApi
+  getListApi,
+  getDetailsApi,
+  getDetailsListApi
 } from '@/api/department'
 export default {
   name: 'AddBox',
@@ -86,7 +84,10 @@ export default {
           },
           {
             validator: async(rule, value, callback) => {
-              const list = await getDepartmentListApi()
+              let list = await getDepartmentListApi()
+              if (this.form.id) {
+                list = list.filter((item) => item.name !== value)
+              }
               if (list.some((item) => item.name === value)) {
                 callback(new Error('部门中已经有该名称了'))
               } else {
@@ -106,7 +107,10 @@ export default {
           },
           {
             validator: async(rule, value, callback) => {
-              const list = await getDepartmentListApi()
+              let list = await getDepartmentListApi()
+              if (this.form.id) {
+                list = list.filter((item) => item.code !== value)
+              }
               if (list.some((item) => item.code === value)) {
                 callback(new Error('部门中已经有该编码了'))
               } else {
@@ -147,16 +151,26 @@ export default {
     add() {
       this.$refs.form.validate(async(valid) => {
         if (valid) {
-          this.form.pid = this.id
-          await getListApi(this.form)
+          let msg = '新增'
+          if (this.form.id) {
+            msg = '编辑'
+            await getDetailsListApi(this.id, this.form)
+          } else {
+            this.form.pid = this.id
+            await getListApi(this.form)
+          }
           this.close()
           this.$message({
-            message: '新增部门成功',
+            message: msg + '部门成功',
             type: 'success'
           })
           this.$emit('a')
         }
       })
+    },
+    async getDetails() {
+      const res = await getDetailsApi(this.id)
+      this.form = res
     }
   }
 }
